@@ -52,10 +52,10 @@ export default function PromoPage() {
       
       <Background direction="diagonal" />
 
-      <header className="flex items-center justify-between z-30 border-b border-white/10 pb-4 relative" >
+      <header className="flex items-center justify-between z-30 border-b border-white/10 relative" >
         <AdminMenu />
 
-        <div className="flex items-center gap-3" style={{ marginLeft: '6rem', marginTop: '1rem'  }}>
+        <div className="flex items-center gap-3" style={{ marginLeft: '6rem', marginTop: '0.5rem'  }}>
           <span className="w-3 h-3 rounded-full bg-brand animate-ping"></span>
           <h1 className="text-2xl md:text-3xl font-light tracking-[0.2em]">
             <span className="text-brand font-bold mr-2">PROJECT</span> PROMOTION
@@ -132,7 +132,7 @@ export default function PromoPage() {
 
         {/* 左下角 QR Code 與投票引導文字 */}
         <div className="w-full flex items-center justify-between px-6 pt-2 border-t border-white/10">
-          <div className="flex items-center gap-4  pb-10 mb-6">
+          <div className="flex items-center gap-4">
             <div className="bg-white p-2 rounded-lg shadow-lg">
                {currentUrl ? (
                   <QRCodeSVG value={`${currentUrl}/vote`} size={75} level="M" />
