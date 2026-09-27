@@ -42,12 +42,12 @@ export default function Countdown() {
 
   const DigitBox = ({ digit, isBrandColor = false }: { digit: string; isBrandColor?: boolean }) => (
     <div 
-      className="w-10 h-14 bg-[#4a4a4a] flex items-center justify-center shadow-inner"
+      className="w-8 h-10 sm:w-10 sm:h-12 md:w-10 md:h-14 bg-[#4a4a4a] flex items-center justify-center shadow-inner shrink-0"
       style={{
         clipPath: 'polygon(25% 0%, 75% 0%, 100% 20%, 100% 80%, 75% 100%, 25% 100%, 0% 80%, 0% 20%)'
       }}
     >
-      <span className={`text-3xl font-black font-sans ${isBrandColor ? 'text-brand' : 'text-white'}`}>
+      <span className={`text-lg sm:text-2xl md:text-3xl font-black font-sans ${isBrandColor ? 'text-brand' : 'text-white'}`}>
         {digit}
       </span>
     </div>

@@ -109,18 +109,18 @@ export default function VotePage() {
   return (
     <div className="min-h-screen flex flex-col px-6 py-10 max-w-md mx-auto">
       
-      <header className="text-center mb-5 flex flex-col items-center">
-        <div className="mb-1 w-120 h-auto">
+      <header className="text-center mb-4 flex flex-col items-center">
+        <div className="mb-1 w-100 h-auto">
           <Image 
             src="/04_LOGO.png"  
             alt="技續 Logo" 
-            width={500}    
-            height={300}         
+            width={400}    
+            height={250}         
             priority               
             className="object-contain"
           />
         </div>
-        <p className="mt-4 text-xl text-brand tracking-widest uppercase font-bold">【專題大賞 投票活動】</p>
+        <p className="mt-2 text-xl text-brand tracking-widest uppercase font-bold">【專題大賞 投票活動】</p>
         <p className="mt-1 text-sm text-white/60 tracking-widest uppercase mb-6">以技為始，續寫未來。</p>
       </header>
 
