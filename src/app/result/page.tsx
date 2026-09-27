@@ -5,20 +5,20 @@ import Image from 'next/image';
 import AdminMenu from '@/components/AdminMenu';
 
 const projectsData = [
-  { id: 0, num: "第一組", title: "AffecCare：基於行為回饋之隱私保護型 EAP 智能推薦引擎", members: "洪明凱、高郁城、蔡廷軒、柯亮宇", professor: "林坤誼、蔡芸琤" },
-  { id: 1, num: "第二組", title: "SEL互動式情緒遊戲盒", members: "羅萲、邱妍心、李介文、吳念庭、吳冠志", professor: "簡佑宏" },
-  { id: 2, num: "第三組", title: "看不見的磨合可視化", members: "蔡柏元、歐乃逸、潘苡晴、陳生好", professor: "陳怡靜" },
-  { id: 3, num: "第四組", title: "寶島地標回憶錄", members: "羅立茵、蔡詠筑、唐湘婷、張菀宸、廖盈琤", professor: "簡佑宏" },
-  { id: 4, num: "第五組", title: "音擬而起 OnomaRise", members: "邱鈺婷、李孟潔、盧姵帆、李佳璇、呂雨璇", professor: "蔡芸琤、林坤誼" },
-  { id: 5, num: "第六組", title: "STEM學習ip設計與推廣", members: "楊佳珣、尤騰毅", professor: "蔡其瑞" },
-  { id: 6, num: "第七組", title: "3D列印之電動船體設計與製作", members: "吳堉安、黃柏彰", professor: "張玉山" },
-  { id: 7, num: "第八組", title: "AI職員情緒分析與HR智慧決策平台", members: "陳楷荃、林宸安", professor: "嚴萬軒" },
-  { id: 8, num: "第九組", title: "AI科技與倫理桌游", members: "林吟貞、周鈺軒、李宛諭、路述恩", professor: "許庭嘉" },
-  { id: 9, num: "第十組", title: "守把手-BFRB 行為覺察與壓力調節整合裝置", members: "白振廷、林渝桓、王玟晽、陳芷彤", professor: "林坤誼" },
-  { id: 10, num: "第十一組", title: "基於 SLII® 理論之管理模擬桌遊開發", members: "謝博全、李東璟", professor: "陳淑媛" },
-  { id: 11, num: "第十二組", title: "啟新驅動所", members: "林世軒、張語宸、黃宇晟、劉得誼、劉文傑", professor: "林坤誼" },
-  { id: 12, num: "第十三組", title: "UNITY × MediaPipe 互動系統整合實作", members: "游靜靜、樓冠佑、陳宥均", professor: "丁玉良" },
-  { id: 13, num: "第十四組", title: "數位轉譯角色空間互動系統", members: "巫冠儀、周庭伊、廖振廷、劉澤文、康恩瑋", professor: "林坤誼" },
+  { id: 1, num: "第一組", title: "AffecCare：基於行為回饋之隱私保護型 EAP 智能推薦引擎", members: "洪明凱、高郁城、蔡廷軒、柯亮宇", professor: "林坤誼、蔡芸琤" },
+  { id: 2, num: "第二組", title: "SEL互動式情緒遊戲盒", members: "羅萲、邱妍心、李介文、吳念庭、吳冠志", professor: "簡佑宏" },
+  { id: 3, num: "第三組", title: "看不見的磨合可視化", members: "蔡柏元、歐乃逸、潘苡晴、陳生好", professor: "陳怡靜" },
+  { id: 4, num: "第四組", title: "寶島地標回憶錄", members: "羅立茵、蔡詠筑、唐湘婷、張菀宸、廖盈琤", professor: "簡佑宏" },
+  { id: 5, num: "第五組", title: "音擬而起 OnomaRise", members: "邱鈺婷、李孟潔、盧姵帆、李佳璇、呂雨璇", professor: "蔡芸琤、林坤誼" },
+  { id: 6, num: "第六組", title: "STEM學習ip設計與推廣", members: "楊佳珣、尤騰毅", professor: "蔡其瑞" },
+  { id: 7, num: "第七組", title: "3D列印之電動船體設計與製作", members: "吳堉安、黃柏彰", professor: "張玉山" },
+  { id: 8, num: "第八組", title: "AI職員情緒分析與HR智慧決策平台", members: "陳楷荃、林宸安", professor: "嚴萬軒" },
+  { id: 9, num: "第九組", title: "AI科技與倫理桌游", members: "林吟貞、周鈺軒、李宛諭、路述恩", professor: "許庭嘉" },
+  { id: 10, num: "第十組", title: "守把手-BFRB 行為覺察與壓力調節整合裝置", members: "白振廷、林渝桓、王玟晽、陳芷彤", professor: "林坤誼" },
+  { id: 11, num: "第十一組", title: "基於 SLII® 理論之管理模擬桌遊開發", members: "謝博全、李東璟", professor: "陳淑媛" },
+  { id: 12, num: "第十二組", title: "啟新驅動所", members: "林世軒、張語宸、黃宇晟、劉得誼、劉文傑", professor: "林坤誼" },
+  { id: 13, num: "第十三組", title: "UNITY × MediaPipe 互動系統整合實作", members: "游靜靜、樓冠佑、陳宥均", professor: "丁玉良" },
+  { id: 14, num: "第十四組", title: "數位轉譯角色空間互動系統", members: "巫冠儀、周庭伊、廖振廷、劉澤文、康恩瑋", professor: "林坤誼" },
 ];
 
 type AwardType = 'popular' | 'innovation' | 'impact';
