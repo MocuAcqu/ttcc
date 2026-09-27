@@ -46,7 +46,7 @@ export default function AdminMenu() {
           <button onClick={() => handleNav("/messages")} className="px-4 py-3 text-sm text-white hover:bg-brand hover:text-black transition-colors border-b border-white/10 whitespace-nowrap text-left">即時留言牆</button>
           <button onClick={() => handleNav("/promo")} className="px-4 py-3 text-sm text-white hover:bg-brand hover:text-black transition-colors border-b border-white/10 whitespace-nowrap text-left">專題宣傳頁</button>
           <button onClick={() => handleNav("/lottery")} className="px-4 py-3 text-sm text-white hover:bg-brand hover:text-black transition-colors border-b border-white/10 whitespace-nowrap text-left">抽獎環節</button>
-          <button onClick={() => handleNav("/result")} className="px-4 py-3 text-sm text-white hover:bg-brand hover:text-black transition-colors border-b border-white/10 whitespace-nowrap text-left">抽獎結果</button>
+          <button onClick={() => handleNav("/result")} className="px-4 py-3 text-sm text-white hover:bg-brand hover:text-black transition-colors border-b border-white/10 whitespace-nowrap text-left">投票結果</button>
           
           {/* 輪播開關按鈕 */}
           <button 
