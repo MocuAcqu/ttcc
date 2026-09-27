@@ -17,8 +17,19 @@ export async function GET() {
       time: new Date(msg.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
     }));
 
-    const votesPerProject = await Vote.aggregate([
-      { $group: { _id: '$projectId', count: { $sum: 1 } } },
+    // 分別統計三個獎項的得票數
+    const popularVotes = await Vote.aggregate([
+      { $group: { _id: '$popularVote', count: { $sum: 1 } } },
+      { $sort: { count: -1 } }
+    ]);
+
+    const innovationVotes = await Vote.aggregate([
+      { $group: { _id: '$innovationVote', count: { $sum: 1 } } },
+      { $sort: { count: -1 } }
+    ]);
+
+    const impactVotes = await Vote.aggregate([
+      { $group: { _id: '$impactVote', count: { $sum: 1 } } },
       { $sort: { count: -1 } }
     ]);
 
@@ -29,10 +40,15 @@ export async function GET() {
         totalVotes,
         totalMessages,
         messages: formattedMessages,
-        votesPerProject,
+        awards: {
+          popular: popularVotes,
+          innovation: innovationVotes,
+          impact: impactVotes,
+        }
       }
     });
   } catch (error) {
+    console.error('取得統計與結算 API 錯誤:', error);
     return NextResponse.json({ success: false, message: '讀取數據失敗' }, { status: 500 });
   }
 }
