@@ -47,7 +47,9 @@ export default function IdleHomePage() {
 
     const checkAndRotate = () => {
       const autoRotateSetting = localStorage.getItem('auto_rotate');
-      if (autoRotateSetting === 'false') return; 
+      if (autoRotateSetting === 'false') {
+        return;
+      }
       navigate('/messages');
     };
 
@@ -57,7 +59,7 @@ export default function IdleHomePage() {
       clearInterval(interval);
       clearTimeout(rotationTimer);
     };
-  }, [router]);
+  }, [navigate]);
 
   return (
     <div className="h-screen w-screen overflow-hidden bg-black text-white flex justify-between p-6 md:p-12 select-none relative box-border">

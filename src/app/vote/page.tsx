@@ -110,7 +110,7 @@ export default function VotePage() {
     <div className="min-h-screen flex flex-col px-6 py-10 max-w-md mx-auto">
       
       <header className="text-center mb-4 flex flex-col items-center">
-        <div className="mb-1 w-100 h-auto">
+        <div className="mb-1 w-90 h-auto">
           <Image 
             src="/04_LOGO.png"  
             alt="技續 Logo" 
