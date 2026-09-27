@@ -128,7 +128,6 @@ export default function ResultPage() {
         </div>
       </header>
 
-      {/* ================= 狀態 1：長條圖統計 ================= */}
       {viewState === 'chart' && (
         <div className="flex-1 flex flex-col items-center justify-center w-full max-w-5xl mx-auto mt-2 animate-fadeIn px-6">
           
@@ -140,12 +139,12 @@ export default function ResultPage() {
 
           <div className="w-full flex flex-col gap-1.5">
             {currentVotesList.map((item: any) => {
-              const project = projectsData.find(p => p.id === item.id);
               const percentage = maxVotes === 0 ? 0 : (item.count / maxVotes) * 100;
               
               return (
                 <div key={item.id} className="flex items-center w-full">
-                  <div className="w-24 text-right pr-4 text-white/80 text-xs font-medium">{project?.num}</div>
+                  {/* 顯示組別名稱，例如「第五組」 */}
+                  <div className="w-24 text-right pr-4 text-white/80 text-xs font-medium">{item.num}</div>
                   <div className="flex-1 h-3.5 bg-white/5 rounded-r overflow-hidden relative flex items-center">
                     <div 
                       className={`h-full transition-all duration-1000 ease-out ${
@@ -175,7 +174,7 @@ export default function ResultPage() {
             </h2>
             <button 
               onClick={() => setViewState('winner')}
-              className="bg-brand text-black font-bold px-10 py-2.5 text-base hover:bg-[#a6d840] transition-colors shadow-lg rounded"
+              className="bg-brand text-black font-bold px-10 py-2.5 text-base hover:bg-[#a6d840] transition-colors shadow-lg rounded cursor-pointer"
             >
               進入 {awardConfig[activeAward].title} 結算畫面
             </button>
