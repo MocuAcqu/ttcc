@@ -31,7 +31,7 @@ const awardConfig = {
 
 export default function ResultPage() {
   const [viewState, setViewState] = useState<'chart' | 'winner'>('chart');
-  const [activeAward, setActiveAward] = useState<AwardType>('popular'); // 當前選擇的獎項
+  const [activeAward, setActiveAward] = useState<AwardType>('popular'); 
   const [awardsData, setAwardsData] = useState<any>({ popular: [], innovation: [], impact: [] });
   const [maxVotes, setMaxVotes] = useState(10);
   const [topProject, setTopProject] = useState<any>(null);
@@ -42,18 +42,27 @@ export default function ResultPage() {
         const res = await fetch('/api/stats');
         const json = await res.json();
         if (json.success && json.data.awards) {
-          const rawAwards = json.data.awards; // { popular: [...], innovation: [...], impact: [...] }
+          const rawAwards = json.data.awards; // { popular: [{_id: 4, count: 10}], ... }
           
           const processed: any = {};
-          let globalMax = 10;
+          let globalMax = 5;
 
+          // 針對三個獎項分別將 14 組資料完整對應補齊
           ['popular', 'innovation', 'impact'].forEach((key) => {
             const rawList = rawAwards[key] || [];
+            
+            // 嚴格遍歷 0 到 13 組，確保永遠剛好 14 筆資料
             const fullData = projectsData.map(p => {
               const found = rawList.find((v: any) => v._id === p.id);
-              return { id: p.id, count: found ? found.count : 0 };
+              return { 
+                id: p.id, 
+                num: p.num,
+                title: p.title,
+                count: found ? found.count : 0 
+              };
             });
-            // 按票數由高到低排序
+
+            // 依照得票數由高到低排序
             fullData.sort((a, b) => b.count - a.count);
             processed[key] = fullData;
 
@@ -71,11 +80,11 @@ export default function ResultPage() {
     fetchResults();
   }, []);
 
-  // 當切換獎項或進入頒獎畫面時，計算當前獎項的最高票組別
+  // 當切換獎項時，自動鎖定該獎項的最高票得主
   useEffect(() => {
     const currentList = awardsData[activeAward];
     if (currentList && currentList.length > 0) {
-      const topId = currentList[0].id; // 已經排序過，第一個就是最高票
+      const topId = currentList[0].id; // 排序後的第一名
       setTopProject(projectsData.find(p => p.id === topId));
     }
   }, [activeAward, awardsData]);
