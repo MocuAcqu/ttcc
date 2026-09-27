@@ -43,7 +43,7 @@ export default function IdleHomePage() {
     };
 
     fetchStats();
-    const interval = setInterval(fetchStats, 3000);
+    const interval = setInterval(fetchStats, 10000);
 
     const checkAndRotate = () => {
       const autoRotateSetting = localStorage.getItem('auto_rotate');

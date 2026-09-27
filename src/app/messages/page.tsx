@@ -52,7 +52,7 @@ export default function LiveMessageWallPage() {
     };
 
     fetchMessages();
-    const pollInterval = setInterval(fetchMessages, 5000);
+    const pollInterval = setInterval(fetchMessages, 15000);
 
     let nextTrack = 0;
 
