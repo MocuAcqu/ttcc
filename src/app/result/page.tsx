@@ -45,7 +45,7 @@ export default function ResultPage() {
           const rawAwards = json.data.awards; // { popular: [{_id: 4, count: 10}], ... }
           
           const processed: any = {};
-          let globalMax = 50;
+          let globalMax = 200;
 
           // 針對三個獎項分別將 14 組資料完整對應補齊
           ['popular', 'innovation', 'impact'].forEach((key) => {
