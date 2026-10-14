@@ -23,9 +23,9 @@ export default function VotePage() {
   const [submitted, setSubmitted] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
 
-  const TARGET_LAT = 25.006764; 
-  const TARGET_LNG = 121.534464; 
-  const ALLOWED_RADIUS = 50;
+  const TARGET_LAT = 25.026876; 
+  const TARGET_LNG = 121.529400; 
+  const ALLOWED_RADIUS = 100;
 
   const handleAcceptRules = () => {
     setShowRulesModal(false);
@@ -63,7 +63,7 @@ export default function VotePage() {
 
         if (distance > ALLOWED_RADIUS) {
           setLocationStatus('out_of_range');
-          setErrorDetail(`目前距離展場約 ${distance} 公尺（超出 200 公尺限制）`);
+          setErrorDetail(`目前距離展場約 ${distance} 公尺（超出 100 公尺限制）`);
         } else {
           setLocationStatus('allowed');
           setErrorDetail('');
@@ -210,7 +210,7 @@ export default function VotePage() {
             <div className="text-xs text-white/80 space-y-3 text-left bg-black/50 p-4 rounded-xl mb-6 leading-relaxed">
               <p>1. 本次投票包含三個獎項：最佳人氣獎、最佳創新獎、最具社會影響力獎。</p>
               <p>2. <strong className="text-red-400">三個獎項必須投給不同的組別</strong>，不可重複支持同一組。</p>
-              <p>3. 參與投票者需授權 GPS 定位，並身處展場現場 200 公尺內方可投票。</p>
+              <p>3. 參與投票者需授權 GPS 定位，並身處展場現場 100 公尺內方可投票。</p>
               <p>4. 完成投票後即可獲得抽獎資格一次，<strong className="text-red-400">一人僅限投票一次</strong>。</p>
             </div>
             <button
