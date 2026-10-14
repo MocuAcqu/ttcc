@@ -18,6 +18,51 @@ export default function VotePage() {
   const [submitted, setSubmitted] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
 
+  const checkGeoLocation = (): Promise<boolean> => {
+    return new Promise((resolve) => {
+      if (!navigator.geolocation) {
+        setErrorMessage('您的瀏覽器不支援定位功能，無法驗證是否在現場。');
+        return resolve(false);
+      }
+
+      const TARGET_LAT = 25.006764; // 緯度
+      const TARGET_LNG = 121.534464; // 經度
+      const ALLOWED_RADIUS = 200; // 半徑公尺內
+
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const userLat = position.coords.latitude;
+          const userLng = position.coords.longitude;
+
+          // 計算距離 (Haversine formula)
+          const R = 6371e3; // 地球半徑 (公尺)
+          const φ1 = (userLat * Math.PI) / 180;
+          const φ2 = (TARGET_LAT * Math.PI) / 180;
+          const Δφ = ((TARGET_LAT - userLat) * Math.PI) / 180;
+          const Δλ = ((TARGET_LNG - userLng) * Math.PI) / 180;
+
+          const a =
+            Math.sin(Δφ / 2) * Math.sin(Δφ / 2) +
+            Math.cos(φ1) * Math.cos(φ2) * Math.sin(Δλ / 2) * Math.sin(Δλ / 2);
+          const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+          const distance = R * c; // 距離 (公尺)
+
+          if (distance > ALLOWED_RADIUS) {
+            setErrorMessage(`投票失敗：偵測到您目前距離展場約 ${Math.round(distance)} 公尺，需在現場 500 公尺內才可投票！`);
+            resolve(false);
+          } else {
+            resolve(true);
+          }
+        },
+        (error) => {
+          setErrorMessage('無法取得您的 GPS 位置，請確認是否已授權瀏覽器定位權限。');
+          resolve(false);
+        },
+        { timeout: 10000, enableHighAccuracy: true }
+      );
+    });
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
@@ -35,6 +80,12 @@ export default function VotePage() {
 
     setSubmitting(true);
     setErrorMessage('');
+
+    const isInLocation = await checkGeoLocation();
+    if (!isInLocation) {
+      setSubmitting(false);
+      return;
+    }
 
     try {
       const res = await fetch('/api/vote', {

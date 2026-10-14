@@ -33,6 +33,13 @@ export default function ResultPage() {
   const [viewState, setViewState] = useState<'chart' | 'winner'>('chart');
   const [activeAward, setActiveAward] = useState<AwardType>('popular'); 
   const [awardsData, setAwardsData] = useState<any>({ popular: [], innovation: [], impact: [] });
+
+  const [settlementWinners, setSettlementWinners] = useState<{ popular: number | null, innovation: number | null, impact: number | null }>({
+    popular: null,
+    innovation: null,
+    impact: null
+  });
+
   const [maxVotes, setMaxVotes] = useState(10);
   const [topProject, setTopProject] = useState<any>(null);
 
@@ -42,16 +49,19 @@ export default function ResultPage() {
         const res = await fetch('/api/stats');
         const json = await res.json();
         if (json.success && json.data.awards) {
-          const rawAwards = json.data.awards; // { popular: [{_id: 4, count: 10}], ... }
+          const rawAwards = json.data.awards; 
           
+          // 儲存後端計算好的遞補得獎名單
+          if (json.data.settlementWinners) {
+            setSettlementWinners(json.data.settlementWinners);
+          }
+
           const processed: any = {};
           let globalMax = 200;
 
-          // 針對三個獎項分別將 14 組資料完整對應補齊
           ['popular', 'innovation', 'impact'].forEach((key) => {
             const rawList = rawAwards[key] || [];
             
-            // 嚴格遍歷 0 到 13 組，確保永遠剛好 14 筆資料
             const fullData = projectsData.map(p => {
               const found = rawList.find((v: any) => v._id === p.id);
               return { 
@@ -62,7 +72,6 @@ export default function ResultPage() {
               };
             });
 
-            // 依照得票數由高到低排序
             fullData.sort((a, b) => b.count - a.count);
             processed[key] = fullData;
 
@@ -80,16 +89,30 @@ export default function ResultPage() {
     fetchResults();
   }, []);
 
-  // 當切換獎項時，自動鎖定該獎項的最高票得主
   useEffect(() => {
-    const currentList = awardsData[activeAward];
-    if (currentList && currentList.length > 0) {
-      const topId = currentList[0].id; // 排序後的第一名
-      setTopProject(projectsData.find(p => p.id === topId));
+    let targetId = null;
+
+    if (viewState === 'winner') {
+      // 頒獎畫面：強制對應後端算好的遞補名單 (settlementWinners)
+      targetId = settlementWinners[activeAward];
+    } 
+    
+    if (!targetId) {
+      // 如果還沒開票或沒有得主，預設抓該清單的第一名
+      const currentList = awardsData[activeAward];
+      if (currentList && currentList.length > 0) {
+        targetId = currentList[0].id;
+      }
     }
-  }, [activeAward, awardsData]);
+
+    if (targetId) {
+      setTopProject(projectsData.find(p => p.id === targetId));
+    }
+  }, [activeAward, awardsData, settlementWinners, viewState]);
 
   const currentVotesList = awardsData[activeAward] || [];
+  
+  const chartTopProject = currentVotesList.length > 0 ? projectsData.find(p => p.id === currentVotesList[0].id) : null;
 
   return (
     <div className="min-h-screen bg-black text-white relative select-none flex flex-col pt-8 overflow-hidden">
@@ -170,7 +193,7 @@ export default function ResultPage() {
 
           <div className="mt-8 text-center">
             <h2 className="text-xl font-bold tracking-widest text-white mb-4">
-              目前最高票為 <span className={`${awardConfig[activeAward].color} ml-2`}>{topProject?.num} {topProject?.title}</span>
+              目前最高票為 <span className={`${awardConfig[activeAward].color} ml-2`}>{chartTopProject?.num} {chartTopProject?.title}</span>
             </h2>
             <button 
               onClick={() => setViewState('winner')}
