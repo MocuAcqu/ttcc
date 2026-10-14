@@ -6,6 +6,10 @@ import Image from 'next/image';
 import { projectsData } from '@/data/projects';
 
 export default function VotePage() {
+  const [showRulesModal, setShowRulesModal] = useState(true);
+  const [locationStatus, setLocationStatus] = useState<'checking' | 'allowed' | 'denied' | 'out_of_range'>('checking');
+  const [distanceText, setDistanceText] = useState<string>('計算中...');
+
   const [popularVote, setPopularVote] = useState<number | ''>('');
   const [innovationVote, setInnovationVote] = useState<number | ''>('');
   const [impactVote, setImpactVote] = useState<number | ''>('');
@@ -18,53 +22,68 @@ export default function VotePage() {
   const [submitted, setSubmitted] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
 
-  const checkGeoLocation = (): Promise<boolean> => {
-    return new Promise((resolve) => {
-      if (!navigator.geolocation) {
-        setErrorMessage('您的瀏覽器不支援定位功能，無法驗證是否在現場。');
-        return resolve(false);
-      }
+  const TARGET_LAT = 25.006764; 
+  const TARGET_LNG = 121.534464; 
+  const ALLOWED_RADIUS = 200;
 
-      const TARGET_LAT = 25.006764; // 緯度
-      const TARGET_LNG = 121.534464; // 經度
-      const ALLOWED_RADIUS = 200; // 半徑公尺內
+  const handleAcceptRules = () => {
+    setShowRulesModal(false);
+    requestLocation();
+  };
 
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          const userLat = position.coords.latitude;
-          const userLng = position.coords.longitude;
+  const requestLocation = () => {
+    if (!navigator.geolocation) {
+      setLocationStatus('denied');
+      return;
+    }
 
-          // 計算距離 (Haversine formula)
-          const R = 6371e3; // 地球半徑 (公尺)
-          const φ1 = (userLat * Math.PI) / 180;
-          const φ2 = (TARGET_LAT * Math.PI) / 180;
-          const Δφ = ((TARGET_LAT - userLat) * Math.PI) / 180;
-          const Δλ = ((TARGET_LNG - userLng) * Math.PI) / 180;
+    setLocationStatus('checking');
+    setDistanceText('定位中...');
 
-          const a =
-            Math.sin(Δφ / 2) * Math.sin(Δφ / 2) +
-            Math.cos(φ1) * Math.cos(φ2) * Math.sin(Δλ / 2) * Math.sin(Δλ / 2);
-          const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-          const distance = R * c; // 距離 (公尺)
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        const userLat = position.coords.latitude;
+        const userLng = position.coords.longitude;
 
-          if (distance > ALLOWED_RADIUS) {
-            setErrorMessage(`投票失敗：偵測到您目前距離展場約 ${Math.round(distance)} 公尺，需在現場 500 公尺內才可投票！`);
-            resolve(false);
-          } else {
-            resolve(true);
-          }
-        },
-        (error) => {
-          setErrorMessage('無法取得您的 GPS 位置，請確認是否已授權瀏覽器定位權限。');
-          resolve(false);
-        },
-        { timeout: 10000, enableHighAccuracy: true }
-      );
-    });
+        const R = 6371e3; // 地球半徑 (公尺)
+        const φ1 = (userLat * Math.PI) / 180;
+        const φ2 = (TARGET_LAT * Math.PI) / 180;
+        const Δφ = ((TARGET_LAT - userLat) * Math.PI) / 180;
+        const Δλ = ((TARGET_LNG - userLng) * Math.PI) / 180;
+
+        const a =
+          Math.sin(Δφ / 2) * Math.sin(Δφ / 2) +
+          Math.cos(φ1) * Math.cos(φ2) * Math.sin(Δλ / 2) * Math.sin(Δλ / 2);
+        const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+        const distance = Math.round(R * c); // 距離 (公尺)
+
+        if (distance < 1000) {
+          setDistanceText(`${distance} 公尺`);
+        } else {
+          setDistanceText(`${(distance / 1000).toFixed(1)} 公里`);
+        }
+
+        if (distance > ALLOWED_RADIUS) {
+          setLocationStatus('out_of_range');
+        } else {
+          setLocationStatus('allowed');
+        }
+      },
+      (error) => {
+        console.error(error);
+        setLocationStatus('denied');
+      },
+      { timeout: 15000, enableHighAccuracy: true }
+    );
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    if (locationStatus !== 'allowed') {
+      setErrorMessage('您目前不在展場現場或尚未授權定位，無法投票。');
+      return;
+    }
     
     if (popularVote === '' || innovationVote === '' || impactVote === '') {
       setErrorMessage('請完成三個獎項的組別選擇！');
@@ -80,12 +99,6 @@ export default function VotePage() {
 
     setSubmitting(true);
     setErrorMessage('');
-
-    const isInLocation = await checkGeoLocation();
-    if (!isInLocation) {
-      setSubmitting(false);
-      return;
-    }
 
     try {
       const res = await fetch('/api/vote', {
@@ -115,6 +128,26 @@ export default function VotePage() {
     }
   };
 
+  if (locationStatus === 'denied' || locationStatus === 'out_of_range') {
+    return (
+      <div className="min-h-screen bg-black text-white flex flex-col items-center justify-center px-6 text-center max-w-md mx-auto select-none">
+        <div className="w-16 h-16 bg-red-500/20 border border-red-500 text-red-400 rounded-full flex items-center justify-center text-3xl mb-6">
+        （◕﹃◕）
+        </div>
+        <h1 className="text-2xl font-bold tracking-widest mb-4">無法進行投票</h1>
+        <p className="text-white/70 mb-8 leading-relaxed">
+          本投票僅開放給展場現場參與者，歡迎蒞臨現場參展！
+        </p>
+        <button
+          onClick={requestLocation}
+          className="bg-brand text-black font-bold px-6 py-3 rounded-xl hover:bg-[#a6d840] transition-colors"
+        >
+          重新偵測位置
+        </button>
+      </div>
+    );
+  }
+
   if (submitted) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center px-6 text-center max-w-md mx-auto">
@@ -131,7 +164,7 @@ export default function VotePage() {
   }
 
   const renderSelect = (
-    label: string, 
+    label: string,
     value: number | '', 
     setValue: (val: number | '') => void, 
     otherVote1: number | '', 
@@ -160,6 +193,31 @@ export default function VotePage() {
   return (
     <div className="min-h-screen flex flex-col px-6 py-10 max-w-md mx-auto">
       
+      <div className="absolute top-4 right-0 bg-[#151515] border border-white/10 px-3 py-1.5 rounded-full flex items-center gap-2 shadow-md">
+        <span className={`w-2 h-2 rounded-full ${locationStatus === 'allowed' ? 'bg-brand animate-pulse' : 'bg-yellow-500 animate-ping'}`}></span>
+        <span className="text-[11px] text-white/70 font-mono">距離展場: <strong className="text-white">{distanceText}</strong></span>
+      </div>
+
+      {showRulesModal && (
+        <div className="fixed inset-0 bg-black/90 backdrop-blur-md z-50 flex items-center justify-center p-6 animate-fadeIn">
+          <div className="bg-[#151515] border border-brand/40 rounded-2xl p-6 w-full max-w-sm shadow-2xl text-center">
+            <h2 className="text-xl font-bold text-brand mb-3 tracking-widest"> 投票活動規則</h2>
+            <div className="text-xs text-white/80 space-y-3 text-left bg-black/50 p-4 rounded-xl mb-6 leading-relaxed">
+              <p>1. 本次投票包含三個獎項：最佳人氣獎、最佳創新獎、最具社會影響力獎。</p>
+              <p>2. <strong className="text-red-400">三個獎項必須投給不同的組別</strong>，不可重複支持同一組。</p>
+              <p>3. 參與投票者需授權 GPS 定位，並身處展場現場 200 公尺內方可投票。</p>
+              <p>4. 完成投票後即可獲得抽獎資格一次，<strong className="text-red-400">一人僅限投票一次</strong>。</p>
+            </div>
+            <button
+              onClick={handleAcceptRules}
+              className="w-full bg-brand text-black font-bold py-3 text-base rounded-xl hover:bg-[#a6d840] transition-colors shadow-lg cursor-pointer"
+            >
+              我知道了，開始投票
+            </button>
+          </div>
+        </div>
+      )}
+
       <header className="text-center mb-4 flex flex-col items-center">
         <div className="mb-1 w-90 h-auto">
           <Image 
@@ -294,14 +352,14 @@ export default function VotePage() {
 
         <button 
           type="submit" 
-          disabled={submitting}
+          disabled={submitting || locationStatus !== 'allowed'}
           className={`mt-6 w-full font-bold py-4 text-lg transition-all rounded-lg ${
-            submitting
+            submitting || locationStatus !== 'allowed'
               ? 'bg-white/10 text-white/30 cursor-not-allowed' 
-              : 'bg-brand text-black hover:bg-[#a6d840] active:scale-[0.98] shadow-[0_0_15px_rgba(185,234,78,0.4)]'
+              : 'bg-brand text-black hover:bg-[#a6d840] active:scale-[0.98] shadow-[0_0_15px_rgba(185,234,78,0.4)] cursor-pointer'
           }`}
         >
-          {submitting ? '送出選票中...' : '確認送出神聖的三票'}
+          {submitting ? '送出選票中...' : locationStatus === 'checking' ? '定位檢測中...' : locationStatus !== 'allowed' ? '未在現場範圍內' : '確認送出神聖的三票'}
         </button>
       </form>
 
