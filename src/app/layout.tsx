@@ -27,8 +27,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="zh-TW" className={cactusSerif.variable}>
-      <body className="font-sans antialiased text-white">
+    <html lang="zh-TW" className={`${notoSansTC.variable} ${cactusSerif.variable}`} suppressHydrationWarning>
+      <body className="font-sans antialiased text-white" suppressHydrationWarning>
         <Background />
         <TransitionProvider>
           <main className="relative z-10">

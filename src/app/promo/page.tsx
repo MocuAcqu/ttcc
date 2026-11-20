@@ -68,18 +68,25 @@ export default function PromoPage() {
       <div className="flex-1 flex items-center justify-between px-12 relative my-4">
         <button onClick={handlePrev} className="z-20 text-white/50 hover:text-brand transition-colors text-6xl font-light p-4 focus:outline-none">&#10094;</button>
 
-        <div className="w-[85%] max-w-6xl h-[65vh] bg-[#111]/90 border border-white/20 rounded-2xl p-8 flex flex-col md:flex-row gap-8 shadow-2xl backdrop-blur-md relative z-10 overflow-hidden">
+        <div className="w-[85%] max-w-[1500px] h-[65vh] bg-[#111]/90 border border-white/20 rounded-2xl p-8 flex flex-col md:flex-row gap-8 shadow-2xl backdrop-blur-md relative z-10 overflow-hidden">
           
           {/* 左側圖片區 */}
-          <div className="w-full md:w-[60%] h-full bg-gradient-to-br from-white/10 to-black rounded-xl border border-white/10 flex items-center justify-center overflow-hidden relative shrink-0">
+          {/* 依組照原始比例 4696 x 3131 (約 3:2) 顯示：寬度佔卡片 62%，高度依比例自動計算 */}
+          <div className="w-full aspect-[4696/3131] md:w-[62%] md:h-auto md:max-h-full bg-gradient-to-br from-white/10 to-black rounded-xl border border-white/10 flex items-center justify-center overflow-hidden relative shrink-0 self-center">
              {currentProject.image ? (
-               <Image src={currentProject.image} alt={currentProject.title} fill className="object-cover" />
+               <Image
+                 src={currentProject.image}
+                 alt={currentProject.title}
+                 fill
+                 sizes="(min-width: 768px) 62vw, 100vw"
+                 className="object-contain"
+               />
              ) : (
                <span className="text-white/30 tracking-widest text-sm">PROJECT IMAGE</span>
              )}
           </div>
 
-          <div className="w-full md:w-[55%] flex flex-col justify-start h-full overflow-y-auto pr-4 custom-scrollbar">
+          <div className="w-full md:flex-1 md:min-w-0 flex flex-col justify-start h-full overflow-y-auto pr-4 custom-scrollbar">
             <h2 className="text-3xl md:text-3xl font-bold text-brand mb-6">{currentProject.title}</h2>
             <p className="font-semibold text-white/60 mb-6 tracking-widest">{currentProject.num}</p>
 
