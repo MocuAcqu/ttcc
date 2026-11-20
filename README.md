@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="public/01_LOGO.png" alt="技・續 Tech to be continued" width="320" />
+<img src="public/02_LOGO.png" alt="技・續 Tech to be continued" width="320" />
 
 # 技 ⋅ 續｜Tech to be continued
 
